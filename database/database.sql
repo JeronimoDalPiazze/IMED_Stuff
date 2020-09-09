@@ -4,43 +4,32 @@ default collate utf8_general_ci;
 
 create table itens (
 id int not null auto_increment,
-nome varchar(20) not null,
-bloco char(1),
+nome varchar(50) not null,
+bloco char(1) not null,
 sala int not null,
-descricao varchar(30),
-item_status varchar(20),
+descricao varchar(50),
+item_status varchar(50),
 quantidade int not null,
 primary key (id)
 ) default charset utf8;
 
 create table usuario (
 id int not null auto_increment,
-email varchar(90),
-senha char(128),
+email varchar(90) not null,
+senha char(128) not null,
 primary key (id)
 ) default charset utf8;
 
 create table funcionario (
 id int not null auto_increment,
-nome varchar(20) not null,
-email varchar(90),
-senha char(128),
+nome varchar(50) not null,
+email varchar(90) not null,
+senha char(128) not null,
 whatsapp varchar(11),
 primary key (id)
 ) default charset utf8;
 
-create table reserva (
-id int not null auto_increment,
-item_id int not null,
-usuario_id int not null,
-data_reserva datetime not null,
-data_entrega datetime not null,
-primary key (id),
-foreign key (item_id) references itens(id),
-foreign key (usuario_id) references usuario(id)
-) default charset utf8;
-
-create table retirada (
+create table reserva_retirada (
 id int not null auto_increment,
 item_id int not null,
 usuario_id int not null,
