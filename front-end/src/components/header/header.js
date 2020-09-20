@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
+
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -19,43 +21,46 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
+        fontSize: 20
     },
 }));
 
 const theme = createMuiTheme({
     palette: {
-      primary: {
-        light: '#757ce8',
-        main: '#3f50b5',
-        dark: '#002884',
-        contrastText: '#fff',
-      },
-      secondary: {
-        light: '#ff7961',
-        main: '#f44336',
-        dark: '#ba000d',
-        contrastText: '#000',
-      },
+        primary: {
+            light: '#757ce8',
+            main: '#3f50b5',
+            dark: '#002884',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#ff7961',
+            main: '#f44336',
+            dark: '#ba000d',
+            contrastText: '#000',
+        },
     },
-  });
+});
 
 export default function Header() {
 
-    const classes = useStyles();    
+    const classes = useStyles();
 
     return (
         <div className={classes.root}>
             <AppBar position="static" theme={theme} color="primary">
                 <Toolbar>
                     <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-                        <MenuIcon/>
+                        <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                        IMED Stuff
+                        <Button component={Link} to={'/home'} color="inherit">
+                            IMED Stuff
+                        </Button>
                     </Typography>
-                    <Button color="secondary">Add colaborador</Button>
-                    <Button color="secondary">Add item</Button>
-                    <Button color="secondary">Log out</Button>
+                    <Button component={Link} to={'/cadastrar_funcionario'} color="inherit">Add colaborador</Button>
+                    <Button component={Link} to={'/cadastrar_item'} color="inherit">Add item</Button>
+                    <Button component={Link} to={'/'} color="inherit">Log out</Button>
                 </Toolbar>
             </AppBar>
         </div>
