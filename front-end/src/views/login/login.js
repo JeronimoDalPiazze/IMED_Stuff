@@ -1,14 +1,18 @@
 import React from 'react';
+
 import { Redirect, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from 'react';
+
 import './login.css';
+
+import { login } from '../../services/auth.service';
 
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { TextField } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
 
@@ -31,12 +35,23 @@ function Login() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [redirect, setRedirect] = useState(false);
+    const [errorMessage, setErrorMessage] = useState();
 
-    const history = useHistory();
+    //const history = useHistory();
 
-    // const handleClick = () => {
-    //     history.push("/home");
-    // }
+    const dispatch = useDispatch();
+
+    const handleLogin = () => {
+        dispatch(login(email, password))
+            .then(() => {
+                setRedirect(true);
+                window.location.reload();
+            })
+            .catch(() => {
+                setErrorMessage("Error while trying to login")
+                console.log(errorMessage)
+            });
+    };
 
     return (
         <>
@@ -58,6 +73,7 @@ function Login() {
                             <TextField
                                 hintText="Password"
                                 label="Senha"
+                                value={password}
                                 floatingLabelText="Password"
                                 type="password"
                                 onChange={(e) => { setPassword(e.target.value) }}
@@ -66,11 +82,11 @@ function Login() {
                     </div>
                     <div className={style.buttons}>
                         <Button variant="outlined" color="primary"
-                            onClick={() => { setRedirect(true) }}>
+                            onClick={() => { handleLogin }}>
                             LOGIN
                         </Button>
                         <Button variant="outlined" color="primary">
-                            Cadastrar
+                            Lembrar senha
                         </Button>
                     </div>
                 </div>
