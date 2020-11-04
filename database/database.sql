@@ -7,8 +7,8 @@ id int not null auto_increment,
 nome varchar(50) not null,
 bloco char(1) not null,
 sala int not null,
-descricao varchar(50),
-item_status varchar(50),
+descricao varchar(100),
+item_status varchar(100),
 quantidade int not null,
 primary key (id)
 ) default charset utf8;
