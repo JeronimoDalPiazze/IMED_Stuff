@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import './login.css';
 
-import { login } from '../../services/auth.service';
+import { login } from '../../actions/auth';
 
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
@@ -41,17 +41,17 @@ function Login() {
 
     const dispatch = useDispatch();
 
-    const handleLogin = () => {
+    function handleLogin() {
         dispatch(login(email, password))
             .then(() => {
                 setRedirect(true);
                 window.location.reload();
             })
             .catch(() => {
-                setErrorMessage("Error while trying to login")
-                console.log(errorMessage)
+                setErrorMessage("Error while trying to login");
+                console.log(errorMessage);
             });
-    };
+    }
 
     return (
         <>
@@ -82,7 +82,7 @@ function Login() {
                     </div>
                     <div className={style.buttons}>
                         <Button variant="outlined" color="primary"
-                            onClick={() => { handleLogin }}>
+                            onClick={() => handleLogin() }>
                             LOGIN
                         </Button>
                         <Button variant="outlined" color="primary">
