@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link, Redirect } from 'react-router-dom';
 import Header from '../../components/header/header';
 import Services from "../../services/user.service";
 
@@ -17,6 +18,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+
 const StyledTableCell = withStyles((theme) => ({
     head: {
         color: theme.palette.common.black,
@@ -62,22 +65,26 @@ const StyledTableRow = withStyles((theme) => ({
 }))(TableRow);
 
 
-function createData(descricao, categoria, status, funcionario, sala, dataRev, dataDev) {
-    return { descricao, categoria, status, funcionario, sala, dataRev, dataDev };
-}
+//function createData(descricao, categoria, status, funcionario, sala, dataRev, dataDev) {
+//    return { descricao, categoria, status, funcionario, sala, dataRev, dataDev };
+//}
 
-const rows = [
-    createData('Controle Ar 21', 'Controles', 'Reservado', 'Fahad Kalil', 305, '06/09/2020', '10/09/2020'),
-    createData('Estojo 302A', 'Estojos', 'Livre', ' ', 302),
-    createData('Controle Ar 19', 'Controles', 'livre', ' ', 203),
-    createData('Estojo 105B', 'Estojos', 'Reservado', 'Fahad Kalil', 105, '06/09/2020', '10/09/2020'),
-    createData('Controle DS 301B', 'Controles', 'Retirado', 'Fahad Kalil', 301, '06/09/2020', '10/09/2020'),
-    createData('Estojo 208C', 'Estojos', 'Livre', ' ', 208),
-];
 
-function Home() {
+//const rows = [
+//    createData('Controle Ar 21', 'Controles', 'Reservado', 'Fahad Kalil', 305, '06/09/2020', '10/09/2020'),
+//    createData('Estojo 302A', 'Estojos', 'Livre', ' ', 302),
+//    createData('Controle Ar 19', 'Controles', 'livre', ' ', 203),
+//    createData('Estojo 105B', 'Estojos', 'Reservado', 'Fahad Kalil', 105, '06/09/2020', '10/09/2020'),
+//    createData('Controle DS 301B', 'Controles', 'Retirado', 'Fahad Kalil', 301, '06/09/2020', '10/09/2020'),
+//    createData('Estojo 208C', 'Estojos', 'Livre', ' ', 208),
+//];
+
+
+const Home = () => {
 
     const [materials, setMaterials] = useState([]);
+    const [searchDesc, setSearchDesc] = useState("");
+    const [searchFunc, setSearchFunc] = useState("");
     const [currentMaterial, setCurrentMaterial] = useState(null);
     const [searchDescription, setSearchDescription] = useState("");
 
@@ -87,29 +94,80 @@ function Home() {
     }, []);
 
 
+    const onSearchDesc = (e) => {
+        const searchDesc = e.target.value;
+        setSearchDesc(searchDesc);
+    };
+
+
+    const onSearchFunc = (e) => {
+        const searchFunc = e.target.value;
+        setSearchFunc(searchFunc);
+    };
+
+
     const getMaterials = () => {
         Services.getMainPage()
-            .then(response => {
+            .then((response) => {
                 setMaterials(response.data);
                 console.log(response.data);
             })
-            .catch(e => {
+            .catch((e) => {
                 console.log(e);
             });
     };
+
 
     const findByDesc = () => {
-        Services.findByDescription(desc)
-            .then(response => {
+        Services.findByDescription(searchDesc)
+            .then((response) => {
                 setMaterials(response.data);
                 console.log(response.data);
             })
-            .catch(e => {
+            .catch((e) => {
                 console.log(e);
             });
     };
 
+
+    const openReservation = (id) => {
+        Services.openReservation(id)
+            .then((response) => {
+                console.log(response.data);
+                //props.history.push("/home");
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
+
+    const updateReservation = (id) => {
+        Services.updateReservation(id)
+            .then((response) => {
+                console.log(response.data);
+                //props.history.push("/home");
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
+
+    const removeMaterial = (id) => {
+        Services.removeMaterial(id)
+            .then((response) => {
+                console.log(response.data);
+                //props.history.push("/home");
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    };
+
+
     const classes = useStyles();
+
 
     const { user: currentUser } = useSelector((state) => state.auth);
 
@@ -126,13 +184,25 @@ function Home() {
             <div className={classes.text}>
                 <form align='center' className={classes.search}>
                     <FormControl>
-                        <TextField id="filled-basic" label="Item" variant="outlined" size="small" />
+                        <TextField id="filled-basic"
+                            label="Item"
+                            variant="outlined"
+                            size="small"
+                            value={searchDesc}
+                            onChange={onSearchDesc} />
                     </FormControl>
                     <FormControl>
-                        <TextField id="filled-basic" label="Funcionário" variant="outlined" size="small" />
+                        <TextField id="filled-basic"
+                            label="Funcionário"
+                            variant="outlined"
+                            size="small"
+                            value={searchFunc}
+                            onChange={onSearchFunc} />
                     </FormControl>
                     <FormControl>
-                        <Button variant="contained" >Pesquisar</Button>
+                        <Button variant="contained"
+                            onClick={() => findByDesc()}> Pesquisar
+                        </Button>
                     </FormControl>
                 </form>
             </div>
@@ -154,22 +224,36 @@ function Home() {
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <StyledTableRow className={classes.root} key={row.descricao}>
-                                <StyledTableCell component="th" scope="row">{row.descricao}</StyledTableCell>
-                                <StyledTableCell align="center">{row.categoria}</StyledTableCell>
-                                <StyledTableCell align="center">{row.status}</StyledTableCell>
-                                <StyledTableCell align="center">{row.funcionario}</StyledTableCell>
-                                <StyledTableCell align="center">{row.sala}</StyledTableCell>
-                                <StyledTableCell align="center">{row.dataRev}</StyledTableCell>
-                                <StyledTableCell align="center">{row.dataDev}</StyledTableCell>
+                            <StyledTableRow className={classes.root} key={materials.id}>
+
+                                <StyledTableCell component="th" scope="row">{materials.descricao}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.categoria}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.status}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.funcionario}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.sala}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.dataRev}</StyledTableCell>
+                                <StyledTableCell align="center">{materials.dataDev}</StyledTableCell>
                                 {
                                     row.dataRev ?
-                                        <StyledTableCell><Button variant="contained" disabled >Reservado</Button></StyledTableCell>
+                                        <StyledTableCell>
+                                            <Button variant="contained" 
+                                                onClick={() => openReservation(materials.id)} >Reabrir</Button>
+                                        </StyledTableCell>
                                         :
-                                        <StyledTableCell><Button variant="contained" >Reservar</Button></StyledTableCell>
+                                        <StyledTableCell>
+                                            <Button variant="contained"
+                                                onClick={() => updateReservation(materials.id)} >Reservar</Button>
+                                        </StyledTableCell>
                                 }
-                                <StyledTableCell><Button variant="contained" >Editar</Button></StyledTableCell>
-                                <StyledTableCell><Button variant="contained" >Excluir</Button></StyledTableCell>
+                                <StyledTableCell>
+                                    <Button variant="contained" 
+                                        Link to={`/editMaterial/${props.match.params.id}`}>Editar</Button>
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                    <Button variant="contained"
+                                        onClick={() => removeMaterial(materials.id)} >Excluir</Button>
+                                </StyledTableCell>
+
                             </StyledTableRow>
                         ))}
                     </TableBody>

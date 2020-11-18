@@ -28,25 +28,56 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function CadastroItem() {
+export default function EditarItem(props) {
 
     const classes = useStyles();
 
-    const [material, setMaterial] = useState();
-    const [descricao, setDescricao] = useState();
-    const [categoria, setCategoria] = useState();
-    const [sala, setSala] = useState();
-    const [data, setData] = useState();
 
-    const salvarMaterial = () => {
+    const Material = {
+        id: null,
+        material: "",
+        descricao: "",
+        categoria: "",
+        sala: null,
+        data: ""
+    };
+
+    
+    const [currentMaterial, setCurrentMaterial] = useState(Material);
+
+
+    const getTutorial = id => {
+        Services.findById(id)
+            .then(response => {
+                setCurrentTutorial(response.data);
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    };
+
+
+    useEffect(() => {
+        getTutorial(props.match.params.id);
+    }, [props.match.params.id]);
+
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setCurrentMaterial({ ...currentMaterial, [name]: value });
+    };
+
+
+    const updateMaterial = () => {
         var values = {
-            d_mat: material,
-            d_desc: descricao,
-            d_cat: categoria,
-            d_sala: sala,
-            d_data: data
+            d_mat: currentMaterial.material,
+            d_desc: currentMaterial.descricao,
+            d_cat: currentMaterial.categoria,
+            d_sala: currentMaterial.sala,
+            d_data: currentMaterial.data
         };
-        Services.createMaterial(values)
+        Services.updateMaterial(props.match.params.id, values)
             .then((response) => {
                 console.log(response.data);
                 props.history.push("/home");
@@ -65,33 +96,39 @@ export default function CadastroItem() {
                         <TextField id="outlined-basic"
                             label="Material"
                             variant="outlined"
-                            onChange={(e) => { setMaterial(e.target.value) }} />
+                            value={currentMaterial.material}
+                            onChange={handleInputChange} />
                     </form>
                     <form className={classes.root} noValidate autoComplete="off">
                         <TextField id="outlined-basic"
                             label="Descrição"
                             variant="outlined"
-                            onChange={(e) => { setDescricao(e.target.value) }} />
+                            value={currentMaterial.descricao}
+                            onChange={handleInputChange} />
                     </form>
                     <form className={classes.root} noValidate autoComplete="off">
                         <TextField id="outlined-basic"
                             label="Categoria"
                             variant="outlined"
-                            onChange={(e) => { setCategoria(e.target.value) }} />
+                            value={currentMaterial.categoria}
+                            onChange={handleInputChange} />
                     </form >
                     <form className={classes.root2} noValidate autoComplete="off">
                         <TextField id="outlined-basic"
                             label="Sala"
                             variant="outlined"
-                            onChange={(e) => { setSala(e.target.value) }} />
+                            value={currentMaterial.sala}
+                            onChange={handleInputChange} />
                         <TextField id="outlined-basic"
                             label="Data de cadastro"
                             variant="outlined"
+                            value={currentMaterial.data}
+                            onChange={handleInputChange}
                             onChange={(e) => { setData(e.target.value) }} />
                     </form >
                     <form className={classes.root2} noValidate autoComplete="off">
                         <Button variant="contained"
-                            onClick={() => { salvarMaterial() }} >Cadastrar item
+                            onClick={() => { updateMaterial() }} >Atualizar item
                         </Button>
                     </form>
                 </Box>
